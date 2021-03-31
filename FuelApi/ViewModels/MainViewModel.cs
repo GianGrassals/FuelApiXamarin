@@ -13,6 +13,7 @@ using WebServiceSample;
 using Xamarin.Forms;
 
 
+
 namespace CombustiblesAPI.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
@@ -22,96 +23,19 @@ namespace CombustiblesAPI.ViewModels
 
         private List<Fuels> Combustibles;
 
-        public List<Fuels> combustibles
-        {
-            get { return Combustibles; }
-            set
-            {
-
-                if (Combustibles != value)
-                {
-                    Combustibles = value;
-
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("combustibles"));
-                }
-                
-            }
-
-        }
-
-
-        private ObservableCollection<Fuels> SemanaSeleccionada;
-
-        public ObservableCollection<Fuels> semana_seleccionada
-        {
-            get { return SemanaSeleccionada; }
-            set
-            {
-                if (SemanaSeleccionada != value)
-                {
-                    SemanaSeleccionada = value;
-
-                   
-
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("semana_seleccionada"));
-                }
-
-
-            }
-
-        }
+        public ObservableCollection<Fuels> SemanaSeleccionada { get; set; }
 
         public ObservableCollection<string> SemanaList { get; set; }
 
-        public ObservableCollection<string> semanalist
-        {
-            get { return SemanaList; }
-            set
-            {
-                SemanaList = value;
-
-                
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("semanalist"));
-                
-            }
-
-        }
-
-
-
         public string FechaSeleccionada { get; set; }
 
-        public string fechaseleccionada
-        {
-            get { return FechaSeleccionada; }
-            set
-            {
-                FechaSeleccionada = value;
-                GetSemanaFiltrada(fechaseleccionada);
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("fechaseleccionada"));
-
-            }
-        }
-
         public string  LabelSemana {get; set;}
-
-        public string labelsemana
-        {
-            get { return LabelSemana; }
-            set
-            {
-                LabelSemana = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("labelsemana"));
-
-            }
-        }
-
 
         public MainViewModel()
         {
 
-            combustibles = new List<Fuels>();
-            semanalist = new ObservableCollection<string>();
+            Combustibles = new List<Fuels>();
+            SemanaList = new ObservableCollection<string>();
             SemanaSeleccionada = new ObservableCollection<Fuels>();
             
 
@@ -127,8 +51,8 @@ namespace CombustiblesAPI.ViewModels
             
             WSClient client = new WSClient();
             var result = await client.Get<Fuels>("http://www.apidashboard.somee.com/api/fuels");
-            combustibles = result;
-            combustibles.Reverse();
+            Combustibles = result;
+            Combustibles.Reverse();
 
             GetListSemanas(); // Llamada de la funcion para crear lista de fechas de reportes (sin duplicados)
             GetUltSemana();
@@ -136,74 +60,72 @@ namespace CombustiblesAPI.ViewModels
         }
 
 
+
+
         public void GetListSemanas()
         {
-            for (int i = 0; i < combustibles.Count; i++)
+            for (int i = 0; i < Combustibles.Count; i++)
             {
-
                 if (i == 0)
                 {
-                    semanalist.Add(combustibles[i].FECHA_SEMANA.ToString("dd/MM/yyyy"));
-
-
-
+                    SemanaList.Add(Combustibles[i].FECHA_SEMANA.ToString("dd/MM/yyyy"));
                 }
                 else
                 {
-                    if (combustibles[i].FECHA_SEMANA != combustibles[i - 1].FECHA_SEMANA)
+                    if (Combustibles[i].FECHA_SEMANA != Combustibles[i - 1].FECHA_SEMANA)
                     {
-                        semanalist.Add(combustibles[i].FECHA_SEMANA.ToString("dd/MM/yyyy"));
+                        SemanaList.Add(Combustibles[i].FECHA_SEMANA.ToString("dd/MM/yyyy"));
                     }
                 }
             }
-
-
-            
-
-            
 
         }
 
 
 
+
         public void GetUltSemana()
         {
-            var ultSemana = combustibles[0].FECHA_SEMANA;
+            var ultSemana = Combustibles[0].FECHA_SEMANA;
 
-            labelsemana = combustibles[0].SEMANA_LABEL;
+            LabelSemana = Combustibles[0].SEMANA_LABEL;
 
-            for (int i = 0; i < combustibles.Count; i++)
+            for (int i = 0; i < Combustibles.Count; i++)
             {
-                if (combustibles[i].FECHA_SEMANA == ultSemana)
+                if (Combustibles[i].FECHA_SEMANA == ultSemana)
                 {
-                    semana_seleccionada.Add(combustibles[i]);
+                    SemanaSeleccionada.Add(Combustibles[i]);
                 }
-
             }
-           
-
         }
 
 
         public void GetSemanaFiltrada(string args)
         {
 
-            semana_seleccionada.Clear();
+            SemanaSeleccionada.Clear();
             
-            for (int i = 0; i < combustibles.Count; i++)
+            for (int i = 0; i < Combustibles.Count; i++)
             {
-                var stringFecha = combustibles[i].FECHA_SEMANA.ToString("dd/MM/yyyy");
+                var stringFecha = Combustibles[i].FECHA_SEMANA.ToString("dd/MM/yyyy");
 
                 if ( stringFecha == args )
                 {
 
-                    labelsemana = combustibles[i].SEMANA_LABEL;
-                    semana_seleccionada.Add(combustibles[i]);
+                    LabelSemana = Combustibles[i].SEMANA_LABEL;
+                    SemanaSeleccionada.Add(Combustibles[i]);
                 }
 
             }
 
 
+        }
+
+
+
+        private void OnFechaSeleccionadaChanged()
+        {
+            GetSemanaFiltrada(FechaSeleccionada);
         }
 
 
