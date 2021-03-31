@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using CombustiblesAPI.ViewModels;
-using FuelApi.Models;
-using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using WebServiceSample;
 
 
 namespace FuelApi

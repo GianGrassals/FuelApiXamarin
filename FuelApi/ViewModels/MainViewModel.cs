@@ -1,16 +1,8 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using FuelApi.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using WebServiceSample;
-using Xamarin.Forms;
+using Refit;
 
 
 
@@ -47,16 +39,17 @@ namespace CombustiblesAPI.ViewModels
 
         public async void GetCombustibles()
         {
-            // Get del API
-            
-            WSClient client = new WSClient();
-            var result = await client.Get<Fuels>("http://www.apidashboard.somee.com/api/fuels");
-            Combustibles = result;
+            // Get del API con REFIT
+
+            var apiResponse = RestService.For<IFuelsApi>("http://www.apidashboard.somee.com");
+            var fuels = await apiResponse.GetFuels();
+
+            Combustibles = fuels;
             Combustibles.Reverse();
 
             GetListSemanas(); // Llamada de la funcion para crear lista de fechas de reportes (sin duplicados)
             GetUltSemana();
-            //GetSemanaFiltrada("2/20/2021 12:00:00 AM");
+
         }
 
 
